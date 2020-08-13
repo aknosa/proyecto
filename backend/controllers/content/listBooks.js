@@ -27,6 +27,9 @@ async function listBooks(req, res, next) {
       case "location":
         orderBy = "location";
         break;
+      case "genre":
+        orderBy = "genre";
+        break;
       default:
         orderBy = "creation_date";
     }
@@ -36,17 +39,17 @@ async function listBooks(req, res, next) {
     if (search) {
       queryResults = await connection.query(
         `
-        SELECT books.id, books.creation_date, books.title, books.author, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location
+        SELECT books.id, books.creation_date, books.title, books.author, books.genre, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
         FROM books, users
-        WHERE (books.author LIKE ? OR books.title LIKE ? OR users.location LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
+        WHERE (books.author LIKE ? OR books.title LIKE ? OR users.location LIKE ? OR books.genre LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
         ORDER BY ${orderBy} ${orderDirection}
         `,
-        [`%${search}%`, `%${search}%`, `%${search}%`]
+        [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`]
       );
     } else {
       queryResults = await connection.query(
         `
-        SELECT books.id, books.creation_date, books.title, books.author, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location
+        SELECT books.id, books.creation_date, books.title, books.genre, books.author, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
         FROM books, users
         WHERE books.book_owner_id=users.id AND books.availability=TRUE
         ORDER BY ${orderBy} ${orderDirection}`

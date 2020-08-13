@@ -11,7 +11,7 @@ async function newUser(req, res, next) {
 
     await newUserSchema.validateAsync(req.body);
 
-    const { email, password } = req.body;
+    const { email, password, location, name } = req.body;
 
     // Comprobar que no existe un usuario con ese mismo email en la base de datos
     const [existingUser] = await connection.query(
@@ -48,13 +48,13 @@ async function newUser(req, res, next) {
       throw generateError("Error en el envío de mail.", 500);
     }
 
-    // meter el nuevo usuario en la base de datos sin activar
+    // Meter el nuevo usuario en la base de datos sin activar
     await connection.query(
       `
-      INSERT INTO users(registration_date, email, password, registration_code, update_date, creation_date)
-      VALUES(NOW(), ?, SHA2(?, 512), ?, NOW(), NOW())
+      INSERT INTO users(registration_date, email, password, registration_code, update_date, creation_date, name, location, image)
+      VALUES(NOW(), ?, SHA2(?, 512), ?, NOW(), NOW(), ?, ?, "usuario1.jpg")
     `,
-      [email, password, registrationCode]
+      [email, password, registrationCode, name, location]
     );
 
     res.send({

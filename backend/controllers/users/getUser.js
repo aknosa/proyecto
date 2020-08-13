@@ -25,7 +25,7 @@ async function getUser(req, res, next) {
 
     const [booksResult] = await connection.query(
       `
-      SELECT title,author,image 
+      SELECT title,author,image,id,genre,synopsis,author_biography,description 
       FROM book_exchange.books
       WHERE book_owner_id=?
       `,

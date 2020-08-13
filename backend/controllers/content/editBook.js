@@ -16,7 +16,14 @@ async function editBook(req, res, next) {
     await editEntrySchema.validateAsync(req.body);
 
     // Sacamos los datos
-    const { author, title, synopsis, authorBiography, description } = req.body;
+    const {
+      author,
+      title,
+      genre,
+      synopsis,
+      authorBiography,
+      description,
+    } = req.body;
     const { id } = req.params;
 
     // Seleccionar datos actuales de la entrada
@@ -61,12 +68,13 @@ async function editBook(req, res, next) {
     await connection.query(
       `
       UPDATE books 
-      SET author=?, title=?, synopsis=?, author_biography=?, description=?, image=?, update_date=NOW()
+      SET author=?, title=?, genre=?, synopsis=?, author_biography=?, description=?, image=?, update_date=NOW()
       WHERE id=?
     `,
       [
         author,
         title,
+        genre,
         synopsis,
         authorBiography,
         description,
@@ -81,6 +89,7 @@ async function editBook(req, res, next) {
       data: {
         author,
         title,
+        genre,
         synopsis,
         authorBiography,
         description,

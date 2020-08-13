@@ -1,7 +1,7 @@
 const Joi = require("@hapi/joi");
 const { generateError } = require("../helpers");
 
-const newUserSchema = Joi.object().keys({
+const loginUserSchema = Joi.object().keys({
   email: Joi.string()
     .email()
     .required()
@@ -19,7 +19,41 @@ const newUserSchema = Joi.object().keys({
     ),
 });
 
-const loginUserSchema = newUserSchema;
+const newUserSchema = Joi.object().keys({
+  email: Joi.string()
+    .email()
+    .required()
+    .error(
+      generateError("El campo email debe existir y ser un email válido.", 400)
+    ),
+  password: Joi.string()
+    .min(8)
+    .required()
+    .error(
+      generateError(
+        "El campo password debe existir y ser mayor de 8 caracteres.",
+        400
+      )
+    ),
+  location: Joi.string()
+    .max(100)
+    .required()
+    .error(
+      generateError(
+        "El campo location debe existir no debe tener más de 100 caracteres.",
+        400
+      )
+    ),
+  name: Joi.string()
+    .max(100)
+    .required()
+    .error(
+      generateError(
+        "El campo name debe existir y no debe de tener más de 100 caracteres.",
+        400
+      )
+    ),
+});
 
 const editUserSchema = Joi.object().keys({
   email: Joi.string()
@@ -48,6 +82,7 @@ const editUserSchema = Joi.object().keys({
         400
       )
     ),
+  avatar: Joi.any(),
 });
 
 const editUserPasswordSchema = Joi.object().keys({

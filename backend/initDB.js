@@ -3,7 +3,7 @@ require("dotenv").config();
 const faker = require("faker/locale/es");
 const { getConnection } = require("./db");
 const { formatDateToDB } = require("./helpers");
-const { random } = require("lodash");
+const { random, sample } = require("lodash");
 
 let connection;
 
@@ -34,6 +34,7 @@ async function main() {
     );
 
     console.log("Metiendo datos de prueba en users");
+
     const users = 20;
 
     for (let index = 0; index < users; index++) {
@@ -45,8 +46,8 @@ async function main() {
 
       await connection.query(
         `
-        INSERT INTO users(registration_date, email, password, role, name, update_date, creation_date, location, phone_number, birthdate)
-        VALUES(NOW(), "${email}", SHA2("${faker.internet.password()}", 512), "normal", "${name}", NOW(), NOW(), "${location}", "${phoneNumber}", "${birthdate}")
+        INSERT INTO users(registration_date, email, password, role, name, update_date, creation_date, location, phone_number, birthdate, image)
+        VALUES(NOW(), "${email}", SHA2("${faker.internet.password()}", 512), "normal", "${name}", NOW(), NOW(), "${location}", "${phoneNumber}", "${birthdate}", "usuario1.jpg")
       `
       );
     }
@@ -54,20 +55,38 @@ async function main() {
     console.log("Metiendo datos de prueba en books");
 
     const books = 50;
+    const genres = [
+      "Poesía",
+      "Teatro",
+      "Terror",
+      "Policiaca",
+      "Ciencia ficción",
+      "Fantasía",
+      "Cómic",
+      "Romántica",
+      "Arte",
+      "Historia y política",
+      "Gastronomía",
+      "Salud",
+      "Deportes",
+      "Infantil",
+    ];
 
     for (let index = 0; index < books; index++) {
       await connection.query(`
-        INSERT INTO books(availability, title, author, description, synopsis, author_biography, update_date, creation_date, book_owner_id)
+        INSERT INTO books(availability, title, author, genre, description, synopsis, author_biography, update_date, creation_date, book_owner_id, image)
         VALUES(
           TRUE,
           "${faker.lorem.sentence()}", 
-          "${faker.name.findName()}", 
+          "${faker.name.findName()}",
+          "${sample(genres)}", 
           "${faker.lorem.paragraph()}",
           "${faker.lorem.paragraph()}", 
           "${faker.lorem.paragraph()}",  
           NOW(), 
           NOW(),
-          "${random(2, users + 1)}")
+          "${random(2, users + 1)}",
+          "libro1.jpg")
       `);
     }
   } catch (error) {

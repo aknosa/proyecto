@@ -4,7 +4,9 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
+const cors = require("cors");
 
+// Middlewares de comprobación
 const isUser = require("./middlewares/isUser");
 const isAdmin = require("./middlewares/isAdmin");
 const entryExists = require("./middlewares/entryExists");
@@ -45,6 +47,12 @@ app.use(bodyParser.json());
 
 // Procesado de body tipo form-data
 app.use(fileUpload());
+
+// Cors
+app.use(cors());
+
+// Para cargar las imágenes
+app.use(express.static("static"));
 
 /*
   ENDPOINTS DE CONTENIDO

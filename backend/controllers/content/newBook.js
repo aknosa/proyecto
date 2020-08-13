@@ -11,7 +11,14 @@ async function newBook(req, res, next) {
     await newEntrySchema.validateAsync(req.body);
 
     // Sacar de req.body los datos que necesitio
-    const { author, title, synopsis, authorBiography, description } = req.body;
+    const {
+      author,
+      title,
+      genre,
+      synopsis,
+      authorBiography,
+      description,
+    } = req.body;
 
     let savedImageFileName;
 
@@ -31,12 +38,13 @@ async function newBook(req, res, next) {
     // Ejecutar la query
     const [result] = await connection.query(
       `
-      INSERT INTO books(creation_date, availability, author, title, image, synopsis, author_biography, description, update_date, book_owner_id)
-      VALUES(NOW(), TRUE, ?, ?, ?, ?, ?, ?, NOW(), ?)
+      INSERT INTO books(creation_date, availability, author, title, genre, image, synopsis, author_biography, description, update_date, book_owner_id)
+      VALUES(NOW(), TRUE, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)
       `,
       [
         author,
         title,
+        genre,
         savedImageFileName,
         synopsis,
         authorBiography,
@@ -53,6 +61,7 @@ async function newBook(req, res, next) {
         id: result.insertId,
         author,
         title,
+        genre,
         image: savedImageFileName,
         synopsis,
         authorBiography,
