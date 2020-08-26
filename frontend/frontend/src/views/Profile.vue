@@ -2,7 +2,7 @@
   <div id="profile">
     <vue-headful title="Perfil | Intercambio de Libros" />
     <h1>Perfil de Usuario</h1>
-    <userdataprofile v-on:info="showProfileInfo" :user="user" />
+    <userdataprofile v-on:change="showPasswordInfo" v-on:info="showProfileInfo" :user="user" />
     <!-- MODAL PARA EDITAR PERFIL -->
     <div v-show="seeProfileModal" class="modal">
       <div class="modalBox">
@@ -78,6 +78,25 @@
       </div>
     </div>
     <!-- MODAL PARA EDITAR LIBRO -->
+    <!-- MODAL PARA CAMBIAR PASSWORD -->
+    <div v-show="seePasswordModal" class="modal">
+      <div class="modalBox">
+        <h3>Cambia tu contraseña</h3>
+        <form>
+          <label for="oldPassword">Contraseña antigua:</label>
+          <input v-model="oldPassword" name="oldPassword" type="password" />
+          <label for="newPassword">Contraseña nueva:</label>
+          <input v-model="newPassword" name="newPassword" type="password" />
+          <label for="newPasswordRepeated">Vuelve a escribir tu nueva contraseña:</label>
+          <input v-model="newPasswordRepeated" name="newPasswordRepeated" type="password" />
+        </form>
+        <div class="options">
+          <button @click="seePasswordModal =! seePasswordModal">Cancelar</button>
+          <button @click="editPasswordAlert()">Actualizar</button>
+        </div>
+      </div>
+    </div>
+    <!-- MODAL PARA CAMBIAR PASSWORD -->
   </div>
 </template>
 
@@ -87,6 +106,7 @@ import userdataprofile from "@/components/UserDataProfile.vue";
 import userdatabooks from "@/components/UserDataBooks.vue";
 import axios from "axios";
 import { config } from "../api/utils";
+import Swal from "sweetalert2";
 
 export default {
   name: "Profile",
@@ -114,16 +134,78 @@ export default {
       updatedBiography: "",
       updatedDescription: "",
       updatedImage: "",
-      updatedBookId: ""
+      updatedBookId: "",
+      seePasswordModal: false,
+      oldPassword: "",
+      newPassword: "",
+      newPasswordRepeated: ""
     };
   },
   methods: {
+    // Función para mandar la petición de cambio de password
+    editPassword() {
+      if (this.newPassword === this.newPasswordRepeated) {
+        axios
+          .post(
+            "http://localhost:3000/users/" + this.id + "/password",
+            { oldPassword: this.oldPassword, newPassword: this.newPassword },
+            config
+          )
+          .then(response => {
+            Swal.fire(
+              "¡Actualizada!",
+              "Has cambiado tu contraseña.",
+              "success"
+            );
+            this.oldPassword = "";
+            this.newPassword = "";
+            this.newPasswordRepeated = "";
+            this.seePasswordModal = false;
+          })
+          .catch(error => {
+            Swal.fire({
+              icon: "error",
+              text: error.response.data.message,
+              showConfirmButton: false,
+              timer: 4000
+            });
+          });
+      } else {
+        Swal.fire({
+          icon: "error",
+          text: "Debe escribir dos veces tu nueva contraseña y que coincidan",
+          showConfirmButton: false,
+          timer: 2500
+        });
+      }
+    },
+
+    // Función que te avisa si quires cambiar de password
+    editPasswordAlert() {
+      Swal.fire({
+        title: "¿Quieres cambiar tu contraseña?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "No",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí"
+      }).then(result => {
+        if (result.value) {
+          this.editPassword();
+        }
+      });
+    },
+    // Función para mostrar el modal de cambio de password
+    showPasswordInfo() {
+      this.seePasswordModal = true;
+    },
     // Función para sacar el usuario de la base de datos
-    getUserById() {
+    getUserById(id) {
       var self = this;
 
       axios
-        .get("http://localhost:3000/users/" + this.id, config)
+        .get("http://localhost:3000/users/" + id, config)
         .then(function(response) {
           self.user = response.data.data;
           self.books = response.data.data.books;
@@ -146,6 +228,7 @@ export default {
 
       this.seeProfileModal = true;
     },
+    // Función para editar perfil
     editProfile() {
       var self = this;
       let formData = new FormData();
@@ -169,6 +252,7 @@ export default {
         });
       location.reload();
     },
+    // Función para mostrar el modal de editar libro
     showBookInfo(bookInfo) {
       this.updatedTitle = bookInfo.title;
       this.updatedAuthor = bookInfo.author;
@@ -181,6 +265,7 @@ export default {
 
       this.seeBookModal = true;
     },
+    // Función para editar el libro
     editBook() {
       var self = this;
       let formData = new FormData();
@@ -217,8 +302,12 @@ export default {
       this.updatedImage = this.$refs.updatedImage.files[0];
     }
   },
+  beforeRouteUpdate(to, from, next) {
+    this.user = this.getUserById(to.params.id);
+    next();
+  },
   created() {
-    this.getUserById();
+    this.getUserById(this.id);
   }
 };
 </script>
@@ -226,6 +315,17 @@ export default {
 <style scoped>
 * {
   box-sizing: border-box;
+}
+
+@keyframes animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
 }
 
 #profile {
@@ -260,6 +360,8 @@ button:hover {
   padding: 1.5rem;
   width: 80%;
   border: 1px solid #888;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 .modal .modalBox h3 {
@@ -319,7 +421,6 @@ textarea:focus {
   box-sizing: content-box;
   text-decoration: none;
   text-transform: uppercase;
-  font-weight: 400;
   font-size: 0.7rem;
   color: #96bb7c;
   text-align: center;

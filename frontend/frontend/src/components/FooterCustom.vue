@@ -20,12 +20,13 @@ footer {
   width: 100%;
   padding: 1rem 0;
   font-size: 0.7rem;
-  z-index: -1;
 }
 
 @media (min-width: 700px) {
   footer {
     font-size: 0.9rem;
+    height: 50px;
+    display: inline-block;
   }
 }
 </style>

@@ -75,6 +75,25 @@ export default {
 </script>
 
 <style scoped>
+@keyframes animation {
+  0% {
+    opacity: 0;
+    top: -60px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
+}
+
+li,
+#searcher,
+h3 {
+  position: relative;
+  animation-name: animation;
+  animation-duration: 1s;
+}
+
 input {
   width: 78%;
   margin-left: 0.25rem;

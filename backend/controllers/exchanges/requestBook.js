@@ -8,7 +8,6 @@ async function requestBook(req, res, next) {
     connection = await getConnection();
 
     const { id } = req.params;
-    //const { offeredBookId } = req.body;
 
     //Comprobar que el libro existe y está disponible
     const [currentBook] = await connection.query(
@@ -60,11 +59,30 @@ async function requestBook(req, res, next) {
       [req.auth.id, wantedBookUserId[0].id, id]
     );
 
-    //Enviar por mail la petición de intercambio
+    //Sacar el nombre del propietario interesado por el intercambio
+    const [offeredBookUserInfo] = await connection.query(
+      `
+      SELECT name
+      FROM users
+      WHERE id=?
+      `,
+      [req.auth.id]
+    );
 
+    //Seleccionar el id de intercambio
+    const [exchangeInfo] = await connection.query(
+      `
+      SELECT id
+      FROM exchanges
+      WHERE exchange_status='In process' AND offered_book_user_id=? AND wanted_book_user_id=? AND wanted_book_id=?
+      `,
+      [req.auth.id, wantedBookUserId[0].id, id]
+    );
+
+    //Enviar por mail la petición de intercambio
     const [wantedBookUserEmail] = await connection.query(
       `
-        SELECT email
+        SELECT email, name
         FROM users
         WHERE id=?
       `,
@@ -76,8 +94,8 @@ async function requestBook(req, res, next) {
     try {
       await sendMail({
         email,
-        title: `Tu libro con id ${id} fue sugerido para intercambiar`,
-        content: `El usuario con id ${req.auth.id} te ha solicitado intercambiar tu libro por un libro de su biblioteca.`,
+        title: `Tu libro '${currentBook[0].title}' fue sugerido para intercambiar`,
+        content: `${offeredBookUserInfo[0].name} te ha solicitado intercambiar tu libro por un libro de su biblioteca. Ve para decidir sobre el intercambio a: http://localhost:8080/#/exchange/${exchangeInfo[0].id}/user/${req.auth.id}`,
       });
     } catch (error) {
       throw generateError("Error en el envío de mail.", 500);

@@ -23,7 +23,7 @@
           {{ book.genre }}
         </li>
         <li>
-          <b>Sinópsis:</b>
+          <b>Sinopsis:</b>
           {{ book.synopsis }}
         </li>
         <li>
@@ -41,7 +41,7 @@
       </ul>
     </div>
     <div id="button" v-show="otherUser">
-      <button>Solicitar intercambio</button>
+      <button @click="exchangeRequest()">Solicitar intercambio</button>
     </div>
   </div>
 </template>
@@ -50,6 +50,8 @@
 import { format } from "date-fns";
 import axios from "axios";
 import { isLoggedIn, getAuthToken, tokenData } from "../api/utils";
+import { config } from "../api/utils";
+import Swal from "sweetalert2";
 
 export default {
   name: "Book",
@@ -64,6 +66,38 @@ export default {
     };
   },
   methods: {
+    exchangeRequest() {
+      Swal.fire({
+        title: "¿Quieres mandar una solicitud de intercambio?",
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonText: "No",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí"
+      }).then(result => {
+        if (result.value) {
+          Swal.fire(
+            "¡Enviada!",
+            "Tu solicitud de intercambio ha sido enviada.",
+            "success"
+          );
+          this.sendExchangeRequest();
+        }
+      });
+    },
+    sendExchangeRequest() {
+      var self = this;
+
+      axios
+        .post("http://localhost:3000/books/" + this.id + "/request", "", config)
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     getBookById() {
       var self = this;
 
@@ -104,10 +138,23 @@ export default {
   box-sizing: border-box;
 }
 
+@keyframes animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.9, 0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
 #bookInfo {
   margin-top: 5rem;
   margin-bottom: 5rem;
   text-align: center;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 #bookInfo img {
@@ -136,6 +183,7 @@ h2 {
   margin: 2rem 0.5rem 2rem 0.5rem;
   background-color: #f7ffbd;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 #bookInfo #user ul li {
@@ -177,6 +225,7 @@ button:hover {
     margin: 12rem auto 0rem auto;
     padding: 1rem;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-bottom: 8rem;
   }
   #bookInfo #user ul {
     margin: 2rem auto 2rem auto;

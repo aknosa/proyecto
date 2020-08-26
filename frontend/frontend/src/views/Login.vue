@@ -2,7 +2,9 @@
   <div id="login">
     <vue-headful title="Login | Intercambio de Libros" />
     <h1>Iniciar Sesión</h1>
-    <div id="form">
+    <spinnercustom v-show="isLoading"></spinnercustom>
+    <div id="form" v-show="!isLoading">
+      <p v-show="errorMsg">*{{message}}</p>
       <form>
         <label for="email">Email:</label>
         <input v-model="email" name="email" type="email" />
@@ -12,34 +14,59 @@
       <div id="button">
         <button @click="loginUser()">Login</button>
       </div>
+      <p>
+        Si has olvidado tu contraseña, pulsa
+        <router-link :to="{name: 'RecoverPassword'}">aquí</router-link>.
+      </p>
     </div>
   </div>
 </template>
 
 <script>
 import { login } from "../api/utils";
+import Swal from "sweetalert2";
+import spinnercustom from "../components/SpinnerCustom";
 
 export default {
   name: "Login",
+  components: {
+    spinnercustom
+  },
   data() {
     return {
       email: "",
       password: "",
+      errorMsg: false,
+      message: "",
+      isLoading: false
     };
   },
   methods: {
-    loginUser() {
+    async loginUser() {
       if (this.email === "" || this.password === "") {
-        alert("Te faltan datos.");
+        Swal.fire({
+          icon: "error",
+          title: "Faltan datos"
+        });
       } else {
-        login(this.email, this.password);
-        setTimeout(() => {
-          this.$router.push("/library");
-          location.reload();
-        }, 1000);
+        try {
+          await login(this.email, this.password);
+          this.isLoading = true;
+          this.$emit("login");
+          setTimeout(() => {
+            this.$router.push("/library");
+          }, 1000);
+        } catch (error) {
+          setTimeout(() => {
+            this.errorMsg = true;
+            this.message = error.response.data.message;
+            this.isLoading = false;
+          }, 1000);
+          this.isLoading = true;
+        }
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -48,8 +75,25 @@ export default {
   box-sizing: border-box;
 }
 
+@keyframes animation {
+  0% {
+    opacity: 0;
+    top: -60px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
+}
+
 #login {
   margin-top: 5rem;
+}
+
+p:first-child {
+  text-align: center;
+  color: #f0134d;
+  margin-bottom: 2rem;
 }
 
 h1 {
@@ -58,7 +102,10 @@ h1 {
 
 #form {
   width: 90%;
-  margin: 3rem 0 3rem 0.5rem;
+  margin: 3rem 0 6rem 0.5rem;
+  position: relative;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 form {
@@ -113,6 +160,11 @@ button:hover {
   border-color: #905858;
 }
 
+p {
+  margin-top: 3rem;
+  text-align: right;
+}
+
 @media (min-width: 700px) {
   #login {
     margin-top: 8rem;
@@ -123,6 +175,9 @@ button:hover {
   }
   input {
     font-size: 1.25rem;
+  }
+  p {
+    font-size: 1.2rem;
   }
 }
 

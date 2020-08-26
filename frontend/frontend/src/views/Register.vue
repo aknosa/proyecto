@@ -3,7 +3,7 @@
     <vue-headful title="Registro | Intercambio de Libros" />
     <h1>Registrar Cuenta</h1>
     <div id="form">
-      <p v-show="errorMsg">*Tienes campos vacíos</p>
+      <p v-show="showErrorMsg">*{{errorMsg}}</p>
       <form>
         <label for="name">Nombre y apellido(s):</label>
         <input v-model="name" type="text" name="name" />
@@ -11,11 +11,13 @@
         <input v-model="location" name="location" type="text" />
         <label for="email">Email:</label>
         <input v-model="email" name="email" type="email" />
-        <label for="password">Password:</label>
+        <label for="password">Contraseña:</label>
         <input v-model="password" name="password" type="password" />
+        <label for="passwordRepeated">Confirma tu contraseña:</label>
+        <input v-model="passwordRepeated" name="passwordRepeated" type="password" />
       </form>
       <div id="button">
-        <button @click="validatingData()">Registrarse</button>
+        <button @click="addNewUser()">Registrarse</button>
       </div>
     </div>
   </div>
@@ -23,6 +25,7 @@
 
 <script>
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default {
   name: "Register",
@@ -32,47 +35,57 @@ export default {
       location: "",
       email: "",
       password: "",
-      errorMsg: false,
-      createUser: false
+      passwordRepeated: "",
+      showErrorMsg: false,
+      errorMsg: ""
+      //createUser: false
     };
   },
   methods: {
-    validatingData() {
-      if (
-        this.name === "" ||
-        this.location === "" ||
-        this.email === "" ||
-        this.password === ""
-      ) {
-        this.createUser = false;
-        this.errorMsg = true;
-      } else {
-        this.errorMsg = false;
-        this.createUser = true;
-        this.addNewUser();
-      }
-    },
+    // validatingData() {
+    //   if (
+    //     this.name === "" ||
+    //     this.location === "" ||
+    //     this.email === "" ||
+    //     this.password === ""
+    //   ) {
+    //     this.createUser = false;
+    //     this.showErrorMsg = true;
+    //   } else {
+    //     this.showErrorMsg = false;
+    //     this.createUser = true;
+    //     this.addNewUser();
+    //   }
+    // },
     addNewUser() {
-      if (this.createUser === true) {
-        var self = this;
+      if (this.password === this.passwordRepeated) {
         axios
           .post("http://localhost:3000/users", {
-            name: self.name,
-            location: self.location,
-            email: self.email,
-            password: self.password
+            name: this.name,
+            location: this.location,
+            email: this.email,
+            password: this.password
           })
-          .then(function(response) {
-            console.log(response);
+          .then(response => {
+            Swal.fire(
+              "¡Usuario creado!",
+              "Recibirás un email que te dará instrucciones para verificar tu cuenta.",
+              "success"
+            );
+            showErrorMsg = false;
           })
-          .catch(function(error) {
-            console.log(error);
+          .catch(error => {
+            this.showErrorMsg = true;
+            this.errorMsg = error.response.data.message;
           });
-        this.createUser = false;
         this.name = "";
         this.location = "";
         this.email = "";
         this.password = "";
+      } else {
+        this.showErrorMsg = true;
+        this.errorMsg =
+          "Tienes que escribir dos veces tu contraseña y que coincidan";
       }
     }
   }
@@ -82,6 +95,17 @@ export default {
 <style scoped>
 * {
   box-sizing: border-box;
+}
+
+@keyframes animation {
+  0% {
+    opacity: 0;
+    top: -60px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
 }
 
 #register {
@@ -96,11 +120,15 @@ p {
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 2rem;
+  color: #f0134d;
 }
 
 #form {
   width: 90%;
   margin: 3rem 0 7rem 0.5rem;
+  position: relative;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 form {

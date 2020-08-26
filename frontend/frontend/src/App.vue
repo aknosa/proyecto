@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <menucustom />
-    <router-view />
+    <menucustom v-on:logout="doingLogout" :is-login="isLogin" />
+    <router-view v-on:login="doingLogin" />
     <footercustom />
   </div>
 </template>
@@ -9,12 +9,32 @@
 <script>
 import menucustom from "@/components/MenuCustom.vue";
 import footercustom from "@/components/FooterCustom.vue";
+import { isLoggedIn } from "@/api/utils";
 
 export default {
   name: "App",
   components: {
     footercustom,
     menucustom
+  },
+  data() {
+    return {
+      isLogin: false
+    };
+  },
+  methods: {
+    doingLogin() {
+      this.isLogin = true;
+    },
+    doingLogout() {
+      this.isLogin = false;
+    },
+    getLogin() {
+      this.isLogin = isLoggedIn();
+    }
+  },
+  created() {
+    this.getLogin();
   }
 };
 </script>
@@ -43,5 +63,9 @@ button:focus {
   position: relative;
   min-height: 100vh;
   padding-bottom: 2rem;
+}
+
+button {
+  cursor: pointer;
 }
 </style>

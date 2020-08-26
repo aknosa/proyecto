@@ -1,7 +1,7 @@
 <template>
   <div id="Add">
     <vue-headful title="Publicar | Intercambio de Libros" />
-    <h1>Publicar un libro</h1>
+    <h1>Publicar un Libro</h1>
     <p v-show="errorMsg">*Faltan por completar campos obligatorios</p>
     <div id="form">
       <form>
@@ -45,6 +45,7 @@
 <script>
 import axios from "axios";
 import { config } from "../api/utils";
+import Swal from "sweetalert2";
 
 export default {
   name: "AddBook",
@@ -91,6 +92,11 @@ export default {
           })
           .then(function(response) {
             console.log(response);
+            Swal.fire(
+              "¡Publicado!",
+              "Has añadido un libro a tu colección.",
+              "success"
+            );
           })
           .catch(function(error) {
             console.log(error);
@@ -114,6 +120,17 @@ export default {
 </script>
 
 <style scoped>
+@keyframes animation {
+  0% {
+    opacity: 0;
+    top: -60px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
+}
+
 #Add {
   margin-top: 5rem;
 }
@@ -126,11 +143,15 @@ p {
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 2rem;
+  color: #f0134d;
 }
 
 #form {
   width: 90%;
   margin: 3rem 0 7rem 0.5rem;
+  position: relative;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 form {

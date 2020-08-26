@@ -54,6 +54,9 @@ export default {
       }
     }
   },
+  beforeUpdate() {
+    this.getAllProfile();
+  },
   created() {
     this.getAllProfile();
   }
@@ -61,6 +64,17 @@ export default {
 </script>
 
 <style scoped>
+@keyframes animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.9, 0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
 h2 {
   margin-top: 4rem;
   margin-bottom: 1.5rem;
@@ -82,6 +96,8 @@ ul li {
   padding: 1rem;
   border: 5px solid #905858;
   border-radius: 25px;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 ul li p {
@@ -95,6 +111,7 @@ ul li img {
   margin-bottom: 2rem;
   width: 150px;
   height: 204px;
+  cursor: pointer;
 }
 
 button {

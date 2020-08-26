@@ -22,7 +22,7 @@ export default {
   width: 80px;
   height: 80px;
   margin: auto;
-  top: 6rem;
+  top: 4rem;
   left: 0;
   right: 0;
   bottom: 0;
@@ -54,6 +54,13 @@ export default {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 700px) {
+  .lds-ring {
+    top: 0;
+    bottom: 7rem;
   }
 }
 </style>

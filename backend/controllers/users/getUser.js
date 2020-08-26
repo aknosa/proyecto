@@ -27,7 +27,7 @@ async function getUser(req, res, next) {
       `
       SELECT title,author,image,id,genre,synopsis,author_biography,description 
       FROM book_exchange.books
-      WHERE book_owner_id=?
+      WHERE book_owner_id=? && availability=TRUE;
       `,
       [id]
     );
@@ -50,17 +50,28 @@ async function getUser(req, res, next) {
 
     let userRating;
 
-    if (offeredBookUserRating && wantedBookUserRating) {
+    if (
+      offeredBookUserRating[0].user_rating_offered !== null &&
+      wantedBookUserRating[0].user_rating_wanted !== null
+    ) {
       userRating =
         (offeredBookUserRating[0].user_rating_offered +
           wantedBookUserRating[0].user_rating_wanted) /
         2;
-    } else if (offeredBookUserRating && !wantedBookUserRating) {
-      userRating = offeredBookUserRating;
-    } else if (!offeredBookUserRating && wantedBookUserRating) {
-      userRating = wantedBookUserRating;
+      console.log(offeredBookUserRating[0].user_rating_offered);
+      console.log(wantedBookUserRating[0].user_rating_wanted);
+    } else if (
+      offeredBookUserRating[0].user_rating_offered !== null &&
+      wantedBookUserRating[0].user_rating_wanted === null
+    ) {
+      userRating = offeredBookUserRating[0].user_rating_offered;
+    } else if (
+      offeredBookUserRating[0].user_rating_offered === null &&
+      wantedBookUserRating[0].user_rating_wanted !== null
+    ) {
+      userRating = wantedBookUserRating[0].user_rating_wanted;
     } else {
-      userRating = null;
+      userRating = 0;
     }
 
     const [userData] = result;
@@ -69,7 +80,7 @@ async function getUser(req, res, next) {
       registrationDate: userData.registrationDate,
       name: userData.name,
       image: userData.image,
-      userRating: userRating.toFixed(1),
+      userRating: Math.ceil(userRating),
       location: userData.location,
       books: booksResult,
     };

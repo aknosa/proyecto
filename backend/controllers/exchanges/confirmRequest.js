@@ -89,10 +89,40 @@ async function confirmRequest(req, res, next) {
       [offeredBookId, place, date, id]
     );
 
-    //Enviar un correo con los datos de la recogida
+    //Sacar el nombre del libro ofrecido
+    const [offeredBookInfo] = await connection.query(
+      `
+      SELECT title
+      from books
+      WHERE id=?
+      `,
+      [offeredBookId]
+    );
+
+    //Sacar el nombre del libro deseado
+    const [wantedBookInfo] = await connection.query(
+      `
+      SELECT title
+      from books
+      WHERE id=?
+      `,
+      [currentExchange[0].wanted_book_id]
+    );
+
+    //Sacar el nombre y el email del usuario que acepta
+    const [wantedBookUserInfo] = await connection.query(
+      `
+      SELECT email, name
+      FROM users
+      WHERE id=?
+      `,
+      [req.auth.id]
+    );
+
+    //Enviar un correo con los datos de la recogida al solicitante del intercambio
     const [offeredBookUserEmail] = await connection.query(
       `
-          SELECT users.email
+          SELECT users.email, users.name
           FROM users, exchanges
           WHERE exchanges.id=? AND users.id=exchanges.offered_book_user_id
         `,
@@ -105,7 +135,18 @@ async function confirmRequest(req, res, next) {
       await sendMail({
         email,
         title: "Han aceptado tu petición de intercambio",
-        content: `El usuario con id ${req.auth.id} ha aceptado intercambiar tu libro con id ${offeredBookId} por su libro con id ${currentExchange[0].wanted_book_id} que habías solicitado. Para veros en: ${place}, en la fecha: ${date}.`,
+        content: `${wantedBookUserInfo[0].name} ha aceptado intercambiar tu libro '${offeredBookInfo[0].title}' por su libro '${wantedBookInfo[0].title}' que habías solicitado. Para veros en: ${place}, en la fecha: ${date}. Para valorar al otro usuario en cómo ha ido el intercambio, puedes visitar esta página: http://localhost:8080/#/exchange/${id}/rate-user/${req.auth.id}`,
+      });
+    } catch (error) {
+      throw generateError("Error en el envío de mail.", 500);
+    }
+
+    //Enviar un correo al que acepta el intercambio
+    try {
+      await sendMail({
+        email: wantedBookUserInfo[0].email,
+        title: "Has aceptado la petición de intercambio",
+        content: `El intercambio va tener lugar en: ${place}, en la fecha: ${date}. Para valorar al otro usuario en cómo ha ido el intercambio, puedes visitar esta página: http://localhost:8080/#/exchange/${id}/rate-user/${currentExchange[0].offered_book_user_id}`,
       });
     } catch (error) {
       throw generateError("Error en el envío de mail.", 500);

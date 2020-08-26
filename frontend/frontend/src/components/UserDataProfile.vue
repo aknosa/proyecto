@@ -1,21 +1,32 @@
 <template>
   <div id="user">
     <div id="image">
-      <img :src="getImageName(user.image)" />
+      <figure>
+        <img :src="getImageName(user.image)" />
+      </figure>
+      <div id="stars">
+        <star-rating
+          :rating="user.userRating"
+          :show-rating="false"
+          :read-only="true"
+          :star-size="40"
+          active-color="#96bb7c"
+        ></star-rating>
+      </div>
     </div>
     <div id="information">
       <ul>
         <li>
           <b>Nombre:</b>
-          {{user.name}}
+          {{ user.name }}
         </li>
         <li v-if="seeProfile">
           <b>Email:</b>
-          {{user.email}}
+          {{ user.email }}
         </li>
         <li>
           <b>Localidad:</b>
-          {{user.location}}
+          {{ user.location }}
         </li>
         <li v-if="seeProfile">
           <b>Fecha de Nacimiento:</b>
@@ -23,12 +34,12 @@
         </li>
         <li v-if="seeProfile">
           <b>Teléfono de contacto:</b>
-          {{user.phoneNumber}}
+          {{ user.phoneNumber }}
         </li>
       </ul>
       <div id="buttons" v-if="seeProfile">
         <button @click="sendUserInfo()">Editar</button>
-        <button>Cambiar contraseña</button>
+        <button @click="sendPasswordChangeRequest()">Cambiar contraseña</button>
       </div>
     </div>
   </div>
@@ -51,6 +62,9 @@ export default {
     user: Object
   },
   methods: {
+    sendPasswordChangeRequest() {
+      this.$emit("change");
+    },
     sendUserInfo() {
       this.$emit("info");
     },
@@ -67,6 +81,9 @@ export default {
       }
     }
   },
+  beforeUpdate() {
+    this.getAllProfile();
+  },
   created() {
     this.getAllProfile();
   }
@@ -74,12 +91,36 @@ export default {
 </script>
 
 <style scoped>
+@keyframes animation {
+  0% {
+    opacity: 0;
+    top: -60px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
+}
+
+#image,
+#information {
+  position: relative;
+  animation-name: animation;
+  animation-duration: 1s;
+}
+
 #image {
   text-align: center;
 }
 
+#stars {
+  margin: 0 auto;
+  width: 196px;
+  margin-bottom: 4rem;
+}
+
 img {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   max-width: 100%;
   width: 175px;
   height: 175px;
@@ -135,11 +176,17 @@ li {
     display: flex;
     justify-content: space-around;
     max-width: 1000px;
+    height: 300px;
     margin: 5rem auto 0 auto;
   }
   img {
     width: 225px;
     height: 225px;
+  }
+  #information {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
   }
 }
 </style>

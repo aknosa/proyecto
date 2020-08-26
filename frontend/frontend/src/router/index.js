@@ -76,6 +76,30 @@ const routes = [
       allowAnon: false,
     },
   },
+  {
+    path: "/exchange/:exchange_id/user/:user_id",
+    name: "ChooseBook",
+    component: () => import("../views/ChooseBook.vue"),
+    meta: {
+      allowAnon: false,
+    },
+  },
+  {
+    path: "/exchange/:exchange_id/rate-user/:user_id",
+    name: "RateUser",
+    component: () => import("../views/RateUser.vue"),
+    meta: {
+      allowAnon: false,
+    },
+  },
+  {
+    path: "/recover-password",
+    name: "RecoverPassword",
+    component: () => import("../views/RecoverPassword.vue"),
+    meta: {
+      allowAnon: true,
+    },
+  },
 ];
 
 const router = new VueRouter({

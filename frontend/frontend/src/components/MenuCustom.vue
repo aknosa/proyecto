@@ -3,11 +3,14 @@
     <div id="nav">
       <router-link :to="{name: 'Home'}">Home</router-link>
       <router-link :to="{name: 'Library'}">Biblioteca</router-link>
-      <router-link v-show="notLogged" :to="{name: 'Login'}">Login</router-link>
-      <router-link v-show="notLogged" :to="{name: 'Register'}">Registro</router-link>
-      <router-link v-show="logged" :to="{name: 'AddBook'}">Publicar</router-link>
-      <router-link v-if="logged" :to="{name: 'Profile', params: {id: tokenData(this.token)}}">Perfil</router-link>
-      <button v-show="logged" @click="logoutUser()">Logout</button>
+      <router-link v-show="!isLogin" :to="{name: 'Login'}">Login</router-link>
+      <router-link v-show="!isLogin" :to="{name: 'Register'}">Registro</router-link>
+      <router-link v-show="isLogin" :to="{name: 'AddBook'}">Publicar</router-link>
+      <router-link
+        v-if="isLogin"
+        :to="{name: 'Profile', params: {id: tokenData(this.token)}}"
+      >Perfil</router-link>
+      <button v-show="isLogin" @click="logoutUser()">Logout</button>
     </div>
   </div>
 </template>
@@ -18,10 +21,13 @@ import { isLoggedIn } from "../api/utils";
 
 export default {
   name: "MenuCustom",
+  props: {
+    isLogin: Boolean
+  },
   data() {
     return {
-      logged: false,
-      notLogged: true,
+      //logged: this.isLogin,
+      //notLogged: true,
       token: getAuthToken(),
       tokenData
     };
@@ -30,16 +36,17 @@ export default {
     logoutUser() {
       logout();
       this.$router.push("/login");
-      location.reload();
-    },
-    getLogin() {
-      this.logged = isLoggedIn();
-      this.notLogged = !isLoggedIn();
+      this.$emit("logout");
+      //location.reload();
     }
-  },
-  created() {
-    this.getLogin();
+    // getLogin() {
+    //   this.logged = this.isLogin;
+    //   this.notLogged = !isLoggedIn();
+    // }
   }
+  // created() {
+  //   this.getLogin();
+  // }
 };
 </script>
 
@@ -73,7 +80,6 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #5d3a3a;
-  text-decoration: underline;
 }
 
 button {
