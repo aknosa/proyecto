@@ -25,6 +25,7 @@
           <option>Salud</option>
           <option>Deportes</option>
           <option>Infantil</option>
+          <option>Ficción histórica</option>
         </select>
         <label for="synopsis">Sinopsis:</label>
         <textarea v-model="synopsis" name="synopsis" placeholder="*Campo opcional"></textarea>
@@ -141,14 +142,14 @@ export default {
 
 p {
   text-align: center;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin-top: 4rem;
+  margin-bottom: 0;
   color: #f0134d;
 }
 
 #form {
   width: 90%;
-  margin: 3rem 0 7rem 0.5rem;
+  margin: 2rem 0 7rem 0.5rem;
   position: relative;
   animation-name: animation;
   animation-duration: 1s;
@@ -233,7 +234,7 @@ button:hover {
     margin-top: 8rem;
   }
   #form {
-    margin: 5rem auto;
+    margin: 4rem auto 8rem auto;
     width: 50%;
   }
   input {

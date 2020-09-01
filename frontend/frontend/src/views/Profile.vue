@@ -35,7 +35,7 @@
       </div>
     </div>
     <!-- MODAL PARA EDITAR PERFIL -->
-    <userdatabooks v-on:bookData="showBookInfo" :books="books" />
+    <userdatabooks v-on:bookData="showBookInfo" v-on:deleteData="deleteBook" :books="books" />
     <!-- MODAL PARA EDITAR LIBRO -->
     <div v-show="seeBookModal" class="modal">
       <div class="modalBox">
@@ -61,6 +61,7 @@
             <option>Salud</option>
             <option>Deportes</option>
             <option>Infantil</option>
+            <option>Ficción histórica</option>
           </select>
           <label for="synopsis">Sinopsis:</label>
           <textarea v-model="updatedSynopsis" name="synopsis"></textarea>
@@ -142,6 +143,39 @@ export default {
     };
   },
   methods: {
+    //Función que hace la petición para borrar libro
+    deleteBook(deleteInfo) {
+      Swal.fire({
+        title: "¿Quieres eliminar este libro de tu biblioteca?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "No",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí"
+      }).then(result => {
+        if (result.value) {
+          axios
+            .delete("http://localhost:3000/books/" + deleteInfo.id, config)
+            .then(response => {
+              Swal.fire(
+                "Libro eliminado",
+                "Has eliminado un libro de tu biblioteca.",
+                "success"
+              );
+              this.getUserById(this.id);
+            })
+            .catch(error => {
+              Swal.fire({
+                icon: "error",
+                text: error.response.data.message,
+                showConfirmButton: false,
+                timer: 4000
+              });
+            });
+        }
+      });
+    },
     // Función para mandar la petición de cambio de password
     editPassword() {
       if (this.newPassword === this.newPasswordRepeated) {
@@ -175,12 +209,12 @@ export default {
           icon: "error",
           text: "Debe escribir dos veces tu nueva contraseña y que coincidan",
           showConfirmButton: false,
-          timer: 2500
+          timer: 4000
         });
       }
     },
 
-    // Función que te avisa si quires cambiar de password
+    // Función que te avisa si quieres cambiar de password
     editPasswordAlert() {
       Swal.fire({
         title: "¿Quieres cambiar tu contraseña?",
@@ -202,16 +236,15 @@ export default {
     },
     // Función para sacar el usuario de la base de datos
     getUserById(id) {
-      var self = this;
-
       axios
         .get("http://localhost:3000/users/" + id, config)
-        .then(function(response) {
-          self.user = response.data.data;
-          self.books = response.data.data.books;
+        .then(response => {
+          this.user = response.data.data;
+          this.books = response.data.data.books;
         })
-        .catch(function(error) {
+        .catch(error => {
           console.log(error);
+          //this.$router.push({ name: "Error" });
         });
     },
     // Función para mostrar el modal de editar perfil
@@ -230,27 +263,36 @@ export default {
     },
     // Función para editar perfil
     editProfile() {
-      var self = this;
       let formData = new FormData();
 
-      formData.append("name", self.updatedName);
-      formData.append("location", self.updatedLocation);
-      formData.append("email", self.updatedEmail);
-      formData.append("birthdate", self.updatedBirthdate);
-      formData.append("phoneNumber", self.updatedPhoneNumber);
-      formData.append("avatar", self.avatar);
+      formData.append("name", this.updatedName);
+      formData.append("location", this.updatedLocation);
+      formData.append("email", this.updatedEmail);
+      formData.append("birthdate", this.updatedBirthdate);
+      formData.append("phoneNumber", this.updatedPhoneNumber);
+      formData.append("avatar", this.avatar);
 
       axios
         .put("http://localhost:3000/users/" + this.id, formData, config, {
           header: { "Content-type": "multipart/form-data" }
         })
-        .then(function(response) {
-          console.log(response);
+        .then(response => {
+          Swal.fire(
+            "¡Usuario actualizado!",
+            "Has actualizado los datos de tu usuario.",
+            "success"
+          );
+          this.getUserById(this.id);
+          this.seeProfileModal = false;
         })
-        .catch(function(error) {
-          console.log(error);
+        .catch(error => {
+          Swal.fire({
+            icon: "error",
+            text: error.response.data.message,
+            showConfirmButton: false,
+            timer: 4000
+          });
         });
-      location.reload();
     },
     // Función para mostrar el modal de editar libro
     showBookInfo(bookInfo) {
@@ -267,16 +309,15 @@ export default {
     },
     // Función para editar el libro
     editBook() {
-      var self = this;
       let formData = new FormData();
 
-      formData.append("author", self.updatedAuthor);
-      formData.append("title", self.updatedTitle);
-      formData.append("genre", self.updatedGenre);
-      formData.append("authorBiography", self.updatedBiography);
-      formData.append("synopsis", self.updatedSynopsis);
-      formData.append("description", self.updatedDescription);
-      formData.append("image", self.updatedImage);
+      formData.append("author", this.updatedAuthor);
+      formData.append("title", this.updatedTitle);
+      formData.append("genre", this.updatedGenre);
+      formData.append("authorBiography", this.updatedBiography);
+      formData.append("synopsis", this.updatedSynopsis);
+      formData.append("description", this.updatedDescription);
+      formData.append("image", this.updatedImage);
 
       axios
         .put(
@@ -287,13 +328,23 @@ export default {
             header: { "Content-type": "multipart/form-data" }
           }
         )
-        .then(function(response) {
-          console.log(response);
+        .then(response => {
+          Swal.fire(
+            "¡Libro actualizado!",
+            "Has actualizado los datos de tu libro.",
+            "success"
+          );
+          this.getUserById(this.id);
+          this.seeBookModal = false;
         })
-        .catch(function(error) {
-          console.log(error);
+        .catch(error => {
+          Swal.fire({
+            icon: "error",
+            text: error.response.data.message,
+            showConfirmButton: false,
+            timer: 4000
+          });
         });
-      location.reload();
     },
     pickAndShowAvatar() {
       this.avatar = this.$refs.avatar.files[0];
@@ -302,12 +353,12 @@ export default {
       this.updatedImage = this.$refs.updatedImage.files[0];
     }
   },
-  beforeRouteUpdate(to, from, next) {
-    this.user = this.getUserById(to.params.id);
-    next();
-  },
   created() {
     this.getUserById(this.id);
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.getUserById(to.params.id);
+    next();
   }
 };
 </script>

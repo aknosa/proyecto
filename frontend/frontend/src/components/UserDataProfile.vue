@@ -81,9 +81,6 @@ export default {
       }
     }
   },
-  beforeUpdate() {
-    this.getAllProfile();
-  },
   created() {
     this.getAllProfile();
   }

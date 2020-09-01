@@ -72,7 +72,8 @@ export default {
               "Recibirás un email que te dará instrucciones para verificar tu cuenta.",
               "success"
             );
-            showErrorMsg = false;
+            this.showErrorMsg = false;
+            this.$router.push("/login");
           })
           .catch(error => {
             this.showErrorMsg = true;
@@ -82,6 +83,7 @@ export default {
         this.location = "";
         this.email = "";
         this.password = "";
+        this.passwordRepeated = "";
       } else {
         this.showErrorMsg = true;
         this.errorMsg =

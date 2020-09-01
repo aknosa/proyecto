@@ -61,6 +61,17 @@ export default {
 </script>
 
 <style scoped>
+@keyframes animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.9, 0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
 #books h3 {
   text-align: center;
   margin-bottom: 2rem;
@@ -81,6 +92,8 @@ ul li {
   padding: 1rem 0.25rem 1rem 0.25rem;
   border: 5px solid #905858;
   border-radius: 25px;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 ul li p {

@@ -58,12 +58,19 @@ const newUserSchema = Joi.object().keys({
 const editUserSchema = Joi.object().keys({
   email: Joi.string()
     .email()
-    .error(generateError("El campo email debe contener un email válido.", 400)),
-  name: Joi.string()
-    .max(100)
+    .required()
     .error(
       generateError(
-        "El campo name no debe de tener más de 100 caracteres.",
+        "El campo email debe existir y contener un email válido.",
+        400
+      )
+    ),
+  name: Joi.string()
+    .max(100)
+    .required()
+    .error(
+      generateError(
+        "El campo name debe existir y no debe de tener más de 100 caracteres.",
         400
       )
     ),
@@ -71,11 +78,13 @@ const editUserSchema = Joi.object().keys({
     generateError("El campo date debe ser una fecha válida.", 400)
   ),
   phoneNumber: Joi.number()
+    .allow("")
     .integer()
     .positive()
     .error(generateError("El número de teléfono no es válido.", 400)),
   location: Joi.string()
     .max(100)
+    .required()
     .error(
       generateError(
         "El campo location no debe tener más de 100 caracteres.",

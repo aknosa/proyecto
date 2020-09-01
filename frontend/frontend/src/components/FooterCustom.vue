@@ -25,7 +25,7 @@ footer {
 @media (min-width: 700px) {
   footer {
     font-size: 0.9rem;
-    height: 50px;
+    height: 60px;
     display: inline-block;
   }
 }

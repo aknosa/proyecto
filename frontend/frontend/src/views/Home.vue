@@ -114,7 +114,7 @@ h3 {
 
 @media (min-width: 700px) {
   .home {
-    margin-top: 4rem;
+    margin-top: 2rem;
     padding-bottom: 4rem;
     background-image: url("../assets/library.jpg");
     background-repeat: no-repeat;

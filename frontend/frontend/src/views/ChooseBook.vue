@@ -3,7 +3,7 @@
     <vue-headful title="Intercambio | Intercambio de Libros" />
     <h1>Escoge un Libro de su Biblioteca</h1>
     <div id="cancel">
-      <h4>O puedes rechazar la solicitud aquí:</h4>
+      <!-- <h4>O puedes rechazar la solicitud aquí:</h4> -->
       <button @click="sendRejection()">Rechazar Intercambio</button>
     </div>
     <exchangebooks :user="user" :books="books" v-on:bookData="showBookModal" />
@@ -54,18 +54,16 @@ export default {
     /* Con esta función consigo información de cada uno de los libros del usuario para 
      que elija uno a intercambiar */
     getUserById() {
-      var self = this;
-
       axios
         .get(
           "http://localhost:3000/users/" + this.$route.params.user_id,
           config
         )
-        .then(function(response) {
-          self.user = response.data.data;
-          self.books = response.data.data.books;
+        .then(response => {
+          this.user = response.data.data;
+          this.books = response.data.data.books;
         })
-        .catch(function(error) {
+        .catch(error => {
           console.log(error);
         });
     },
@@ -94,36 +92,39 @@ export default {
         confirmButtonText: "Sí"
       }).then(result => {
         if (result.value) {
-          Swal.fire(
-            "¡Intercambio confimado!",
-            "El lugar, la fecha y la hora del intercambio han sido enviados al otro propietario.",
-            "success"
-          );
           this.confirmationRequest();
         }
       });
     },
     // Petición para confirmar el intercambio
     confirmationRequest() {
-      var self = this;
-
       axios
         .post(
           "http://localhost:3000/request/" +
             this.$route.params.exchange_id +
             "/confirm",
           {
-            offeredBookId: self.offeredBookId,
-            place: self.place,
-            date: self.date
+            offeredBookId: this.offeredBookId,
+            place: this.place,
+            date: this.date
           },
           config
         )
-        .then(function(response) {
-          console.log(response);
+        .then(response => {
+          Swal.fire(
+            "¡Intercambio confimado!",
+            "El lugar, la fecha y la hora del intercambio han sido enviados al otro propietario.",
+            "success"
+          );
+          this.seeConfirmationModal = false;
         })
-        .catch(function(error) {
-          console.log(error);
+        .catch(error => {
+          Swal.fire({
+            icon: "error",
+            text: error.response.data.message,
+            showConfirmButton: false,
+            timer: 4000
+          });
         });
     },
     sendRejection() {
@@ -137,18 +138,11 @@ export default {
         confirmButtonText: "Sí"
       }).then(result => {
         if (result.value) {
-          Swal.fire(
-            "El intercambio ha sido rechazado",
-            "Has rechazado la solicitud de intercambio.",
-            "success"
-          );
           this.rejectionRequest();
         }
       });
     },
     rejectionRequest() {
-      var self = this;
-
       axios
         .post(
           "http://localhost:3000/request/" +
@@ -157,11 +151,20 @@ export default {
           "",
           config
         )
-        .then(function(response) {
-          console.log(response);
+        .then(response => {
+          Swal.fire(
+            "El intercambio ha sido rechazado",
+            "Has rechazado la solicitud de intercambio.",
+            "success"
+          );
         })
-        .catch(function(error) {
-          console.log(error);
+        .catch(error => {
+          Swal.fire({
+            icon: "error",
+            text: error.response.data.message,
+            showConfirmButton: false,
+            timer: 4000
+          });
         });
     }
   },
@@ -172,6 +175,28 @@ export default {
 </script>
 
 <style scoped>
+@keyframes animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.9, 0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes animation2 {
+  0% {
+    opacity: 0;
+    top: -60px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
+}
+
 #exchange {
   margin-top: 5rem;
   margin-bottom: 3rem;
@@ -215,6 +240,10 @@ button:hover {
   border: 0.16em solid #f0134d;
   color: #f0134d;
   margin-top: 1rem;
+  font-size: 1.1rem;
+  position: relative;
+  animation-name: animation2;
+  animation-duration: 1s;
 }
 
 #cancel button:hover {
@@ -239,6 +268,8 @@ button:hover {
   padding: 1.5rem;
   width: 80%;
   border: 1px solid #888;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 .modal .modalBox h3 {
@@ -248,6 +279,7 @@ button:hover {
 
 .modal p {
   text-align: center;
+  color: #f0134d;
 }
 
 .modal .modalBox form {

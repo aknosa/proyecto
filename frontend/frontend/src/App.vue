@@ -9,7 +9,7 @@
 <script>
 import menucustom from "@/components/MenuCustom.vue";
 import footercustom from "@/components/FooterCustom.vue";
-import { isLoggedIn } from "@/api/utils";
+import { isLoggedIn, getAuthToken, tokenData } from "@/api/utils";
 
 export default {
   name: "App",

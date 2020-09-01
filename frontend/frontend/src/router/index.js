@@ -27,14 +27,6 @@ const routes = [
     },
   },
   {
-    path: "*",
-    name: "Error",
-    component: () => import("../views/Error.vue"),
-    meta: {
-      allowAnon: true,
-    },
-  },
-  {
     path: "/login",
     name: "Login",
     component: () => import("../views/Login.vue"),
@@ -96,6 +88,14 @@ const routes = [
     path: "/recover-password",
     name: "RecoverPassword",
     component: () => import("../views/RecoverPassword.vue"),
+    meta: {
+      allowAnon: true,
+    },
+  },
+  {
+    path: "*",
+    name: "Error",
+    component: () => import("../views/Error.vue"),
     meta: {
       allowAnon: true,
     },

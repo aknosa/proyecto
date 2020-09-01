@@ -28,14 +28,14 @@ async function main() {
 
     await connection.query(
       `
-      INSERT INTO users(registration_date, email, password, role, name, active, update_date)
-      VALUES(NOW(), "andres.canosa.quintero@gmail.com", SHA2("${process.env.DEFAULT_ADMIN_PASSWORD}", 512), "admin", "Andrés Canosa", true, NOW())
+      INSERT INTO users(registration_date, email, password, role, name, active, update_date, image)
+      VALUES(NOW(), "andres.canosa.quintero@gmail.com", SHA2("${process.env.DEFAULT_ADMIN_PASSWORD}", 512), "admin", "Andrés Canosa", true, NOW(), "usuario1.jpg")
     `
     );
 
     console.log("Metiendo datos de prueba en users");
 
-    const users = 20;
+    const users = 40;
 
     for (let index = 0; index < users; index++) {
       const email = faker.internet.email();
@@ -54,7 +54,7 @@ async function main() {
 
     console.log("Metiendo datos de prueba en books");
 
-    const books = 50;
+    const books = 100;
     const genres = [
       "Poesía",
       "Teatro",
@@ -70,6 +70,7 @@ async function main() {
       "Salud",
       "Deportes",
       "Infantil",
+      "Ficción histórica",
     ];
 
     for (let index = 0; index < books; index++) {

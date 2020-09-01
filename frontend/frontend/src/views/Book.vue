@@ -222,7 +222,7 @@ button:hover {
   #bookInfo {
     background-color: #f7ffbd;
     width: 600px;
-    margin: 12rem auto 0rem auto;
+    margin: 10rem auto 0rem auto;
     padding: 1rem;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-bottom: 8rem;

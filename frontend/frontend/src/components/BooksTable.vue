@@ -9,7 +9,7 @@
     >¡Por aquí podrás buscar el libro que desees por título, nombre del autor, género literario o localidad donde se encuentre su propietario!</h3>
     <spinnercustom v-show="isLoading"></spinnercustom>
     <ul v-show="!isLoading">
-      <li v-for="book in books" :key="book.id" v-show="showResults" @click="toBook(book.id)">
+      <li v-for="book in showedBook" :key="book.id" v-show="showResults" @click="toBook(book.id)">
         <img :src="getImageName(book.image)" />
         <p>
           <b>Título:</b>
@@ -33,6 +33,28 @@
         </p>
       </li>
     </ul>
+    <!-- PAGINACIÓN -->
+    <div v-show="!isLoading">
+      <nav id="pages" v-show="showResults">
+        <ul v-show="showPages">
+          <li class="otherButton">
+            <button @click="previousPage" :class="{ disable: currentPage===0 }">&laquo;</button>
+          </li>
+
+          <li v-for="page in pages" :key="page" id="buttonNumber">
+            <button :class="{ active: currentPage===page }" @click="goToPage(page)">{{ page + 1 }}</button>
+          </li>
+
+          <li class="otherButton">
+            <button
+              @click="nextPage"
+              :class="{ disable: currentPage === Math.ceil(books.length/elementsPerPage) -1}"
+            >&raquo;</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <!-- PAGINACIÓN -->
   </div>
 </template>
 
@@ -51,10 +73,49 @@ export default {
     return {
       searchName: "",
       showResults: false,
-      isLoading: false
+      isLoading: false,
+      showPages: true,
+      currentIndex: 0,
+      elementsPerPage: 9,
+      currentPage: 0
     };
   },
+  computed: {
+    showedBook() {
+      let slice = this.books;
+
+      return slice.slice(
+        this.currentIndex,
+        this.currentIndex + this.elementsPerPage
+      );
+    },
+    pages() {
+      let numberOfPages = Math.ceil(this.books.length / this.elementsPerPage);
+      let pageArray = [];
+      for (let i = 0; i < numberOfPages; i++) {
+        pageArray.push(i);
+      }
+      if (pageArray.length === 0) {
+        this.showPages = false;
+      } else {
+        this.showPages = true;
+      }
+      return pageArray;
+    }
+  },
   methods: {
+    previousPage() {
+      this.currentPage = this.currentPage - 1;
+      this.currentIndex = this.currentIndex - this.elementsPerPage;
+    },
+    nextPage() {
+      this.currentPage = this.currentPage + 1;
+      this.currentIndex = this.currentIndex + this.elementsPerPage;
+    },
+    goToPage(page) {
+      this.currentPage = page;
+      this.currentIndex = page * this.elementsPerPage;
+    },
     searchByName() {
       let search = this.searchName;
       this.$emit("booksList", search);
@@ -86,6 +147,65 @@ export default {
   }
 }
 
+#pages {
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+#pages ul {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#pages ul li {
+  border: none;
+  border-radius: 0;
+  margin: 0.5rem 0.25rem;
+  height: 2rem;
+  width: 2rem;
+  animation: none;
+}
+
+#buttonNumber button {
+  border: none;
+  border-radius: 0;
+  background-color: white;
+  color: #222222;
+  padding: 8px;
+  border: 1px solid #ddd;
+  height: 2rem;
+  width: 2rem;
+}
+
+#buttonNumber button:hover:not(.active) {
+  background-color: #ddd;
+}
+
+.otherButton button:hover {
+  background-color: white;
+  border: none;
+  color: #5d3a3a;
+  font-size: 1.2rem;
+}
+
+.otherButton button {
+  background-color: white;
+  border: none;
+  color: #5d3a3a;
+  font-size: 1.2rem;
+}
+
+#buttonNumber .active {
+  background-color: #96bb7c;
+}
+
+.otherButton .disable {
+  pointer-events: none;
+  color: #ddd;
+}
+
 li,
 #searcher,
 h3 {
@@ -101,6 +221,11 @@ input {
   border: 2px solid #96bb7c;
   color: #222222;
   transition: all 0.5s;
+  background-image: url("../assets/lupa.png");
+  background-position: 10px;
+  background-repeat: no-repeat;
+  background-size: 13px;
+  padding-left: 40px;
 }
 
 input:focus {
@@ -109,6 +234,7 @@ input:focus {
 
 button {
   margin-left: 0.25rem;
+  padding: 0.25rem;
   margin-bottom: 4rem;
   background-color: #905858;
   color: #b5e0ba;
@@ -177,14 +303,15 @@ li {
   input {
     width: 50%;
     height: 2rem;
+    background-size: 20px;
   }
   button {
-    font-size: 1.3rem;
-    border: 4px solid #96bb7c;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    border: 2px solid #96bb7c;
   }
   button:hover {
-    font-size: 1.3rem;
-    border: 4px solid;
+    border: 2px solid;
   }
   h3 {
     width: 500px;
@@ -210,17 +337,71 @@ li {
   img {
     border-radius: 25px;
   }
-
-  @media (min-width: 1000px) {
-    li {
-      width: 30%;
-    }
+  #pages {
+    margin-bottom: 4rem;
+    width: auto;
+    margin: 0 auto;
   }
+  #pages ul {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 8rem;
+  }
+  #pages ul li {
+    border: none;
+    border-radius: 0;
+    margin: 0.5rem 0.25rem;
+    height: 2rem;
+    width: 2rem;
+    box-shadow: none;
+    transform: scale(1, 1);
+  }
+  #buttonNumber button {
+    border: none;
+    border-radius: 0;
+    background-color: white;
+    color: #222222;
+    padding: 8px;
+    border: 1px solid #ddd;
+    height: 2rem;
+    width: 2rem;
+    font-size: 0.9rem;
+  }
+  #buttonNumber button:hover:not(.active) {
+    background-color: #ddd;
+  }
+  .otherButton button:hover {
+    background-color: white;
+    border: none;
+    color: #5d3a3a;
+    font-size: 1.2rem;
+  }
+  .otherButton button {
+    background-color: white;
+    border: none;
+    color: #5d3a3a;
+    font-size: 1.2rem;
+  }
+  #buttonNumber .active {
+    background-color: #96bb7c;
+  }
+}
 
-  @media (min-width: 1300px) {
-    li {
-      width: 25.5%;
-    }
+@media (min-width: 1000px) {
+  li {
+    width: 30%;
+  }
+  #pages {
+    width: auto;
+  }
+}
+
+@media (min-width: 1300px) {
+  li {
+    width: 25.5%;
   }
 }
 </style>

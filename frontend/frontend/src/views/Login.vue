@@ -44,17 +44,15 @@ export default {
   methods: {
     async loginUser() {
       if (this.email === "" || this.password === "") {
-        Swal.fire({
-          icon: "error",
-          title: "Faltan datos"
-        });
+        this.errorMsg = true;
+        this.message = "Falta poner el email y/o la contraseña";
       } else {
         try {
           await login(this.email, this.password);
           this.isLoading = true;
           this.$emit("login");
           setTimeout(() => {
-            this.$router.push("/library");
+            this.$router.push("/");
           }, 1000);
         } catch (error) {
           setTimeout(() => {

@@ -1,16 +1,21 @@
 <template>
   <div>
     <div id="nav">
-      <router-link :to="{name: 'Home'}">Home</router-link>
+      <router-link :to="{name: 'Home'}">
+        <figure>
+          <img src="../assets/casa.png" />
+        </figure>
+      </router-link>
       <router-link :to="{name: 'Library'}">Biblioteca</router-link>
       <router-link v-show="!isLogin" :to="{name: 'Login'}">Login</router-link>
       <router-link v-show="!isLogin" :to="{name: 'Register'}">Registro</router-link>
       <router-link v-show="isLogin" :to="{name: 'AddBook'}">Publicar</router-link>
-      <router-link
-        v-if="isLogin"
-        :to="{name: 'Profile', params: {id: tokenData(this.token)}}"
-      >Perfil</router-link>
-      <button v-show="isLogin" @click="logoutUser()">Logout</button>
+      <router-link v-if="isLogin" :to="{name: 'Profile', params: {id:tokenData(this.token)}}">Perfil</router-link>
+      <button v-show="isLogin" @click="logoutUser()">
+        <figure>
+          <img src="../assets/entrar.png" />
+        </figure>
+      </button>
     </div>
   </div>
 </template>
@@ -61,8 +66,13 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
-  line-height: 2;
+  align-content: center;
   z-index: 9999;
+}
+
+a:not(:first-child),
+a:not(:last-child) {
+  line-height: 2;
 }
 
 #nav a {
@@ -82,25 +92,48 @@ export default {
   color: #5d3a3a;
 }
 
-button {
-  border: none;
-  border-radius: 50px;
-  background-color: #f7ffbd;
-  color: #5d3a3a;
-  transition: all 0.5s;
-  cursor: pointer;
+/* #nav a.router-link-exact-active figure {
+  border-bottom: 3px solid #5d3a3a;
+} */
+
+#nav figure img {
+  width: 15px;
+  position: relative;
+  top: 2px;
 }
 
-button:hover {
+#nav figure {
+  transition: all 0.25s;
+}
+
+#nav figure:hover {
   transform: translateY(-4px);
 }
 
+button {
+  border: none;
+  background-color: transparent;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+
 @media (min-width: 600px) {
+  #nav {
+    height: 60px;
+  }
   #nav a {
     font-size: 1.25rem;
   }
-  button {
-    font-size: 1rem;
+  #nav figure img {
+    width: 25px;
+    position: relative;
+    top: 4px;
   }
+}
+
+@media (min-width: 1000px) {
+  /* #nav figure img {
+    width: 25px;
+  } */
 }
 </style>
