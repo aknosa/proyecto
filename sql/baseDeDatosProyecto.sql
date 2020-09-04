@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS books (
     availability BOOLEAN DEFAULT TRUE NOT NULL,
     title VARCHAR(200) NOT NULL,
     author TEXT NOT NULL,
-    genre ENUM('Poesía', 'Teatro', 'Terror', 'Policiaca', 'Ciencia ficción', 'Fantasía', 'Cómic', 'Romántica', 'Arte', 'Historia y política', 'Gastronomía', 'Salud', 'Deportes', 'Infantil'),
+    genre ENUM('Poesía', 'Teatro', 'Terror', 'Policiaca', 'Ciencia ficción', 'Fantasía', 'Cómic', 'Romántica', 'Arte', 'Historia y política', 'Gastronomía', 'Salud', 'Deportes', 'Infantil', 'Ficción histórica'),
     description TEXT,
     synopsis TEXT,
     author_biography TEXT,

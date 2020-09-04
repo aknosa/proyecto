@@ -106,7 +106,7 @@ import { format } from "date-fns";
 import userdataprofile from "@/components/UserDataProfile.vue";
 import userdatabooks from "@/components/UserDataBooks.vue";
 import axios from "axios";
-import { config } from "../api/utils";
+import { config, getAuthToken } from "../api/utils";
 import Swal from "sweetalert2";
 
 export default {
@@ -156,7 +156,9 @@ export default {
       }).then(result => {
         if (result.value) {
           axios
-            .delete("http://localhost:3000/books/" + deleteInfo.id, config)
+            .delete("http://localhost:3000/books/" + deleteInfo.id, {
+              headers: { Authorization: getAuthToken() }
+            })
             .then(response => {
               Swal.fire(
                 "Libro eliminado",
@@ -183,7 +185,9 @@ export default {
           .post(
             "http://localhost:3000/users/" + this.id + "/password",
             { oldPassword: this.oldPassword, newPassword: this.newPassword },
-            config
+            {
+              headers: { Authorization: getAuthToken() }
+            }
           )
           .then(response => {
             Swal.fire(
@@ -237,7 +241,9 @@ export default {
     // Función para sacar el usuario de la base de datos
     getUserById(id) {
       axios
-        .get("http://localhost:3000/users/" + id, config)
+        .get("http://localhost:3000/users/" + id, {
+          headers: { Authorization: getAuthToken() }
+        })
         .then(response => {
           this.user = response.data.data;
           this.books = response.data.data.books;
@@ -273,9 +279,16 @@ export default {
       formData.append("avatar", this.avatar);
 
       axios
-        .put("http://localhost:3000/users/" + this.id, formData, config, {
-          header: { "Content-type": "multipart/form-data" }
-        })
+        .put(
+          "http://localhost:3000/users/" + this.id,
+          formData,
+          {
+            headers: { Authorization: getAuthToken() }
+          },
+          {
+            header: { "Content-type": "multipart/form-data" }
+          }
+        )
         .then(response => {
           Swal.fire(
             "¡Usuario actualizado!",
@@ -323,7 +336,9 @@ export default {
         .put(
           "http://localhost:3000/books/" + this.updatedBookId,
           formData,
-          config,
+          {
+            headers: { Authorization: getAuthToken() }
+          },
           {
             header: { "Content-type": "multipart/form-data" }
           }

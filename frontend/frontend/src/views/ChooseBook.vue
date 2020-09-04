@@ -31,7 +31,7 @@
 <script>
 import exchangebooks from "@/components/ExchangeBooks.vue";
 import axios from "axios";
-import { config } from "../api/utils";
+import { config, getAuthToken } from "../api/utils";
 import Swal from "sweetalert2";
 
 export default {
@@ -55,10 +55,9 @@ export default {
      que elija uno a intercambiar */
     getUserById() {
       axios
-        .get(
-          "http://localhost:3000/users/" + this.$route.params.user_id,
-          config
-        )
+        .get("http://localhost:3000/users/" + this.$route.params.user_id, {
+          headers: { Authorization: getAuthToken() }
+        })
         .then(response => {
           this.user = response.data.data;
           this.books = response.data.data.books;
@@ -108,7 +107,9 @@ export default {
             place: this.place,
             date: this.date
           },
-          config
+          {
+            headers: { Authorization: getAuthToken() }
+          }
         )
         .then(response => {
           Swal.fire(
@@ -149,7 +150,9 @@ export default {
             this.$route.params.exchange_id +
             "/reject",
           "",
-          config
+          {
+            headers: { Authorization: getAuthToken() }
+          }
         )
         .then(response => {
           Swal.fire(

@@ -9,7 +9,7 @@ async function listBooks(req, res, next) {
     //  search: para listar solo las entradas que contengan su valor en place o description
     //  order: para ordernar el listado por voteAverage, place o date
     //  direction: para la dirección de la ordenación desc o asc
-    const { search, order, direction } = req.query;
+    const { search, order, direction, field } = req.query;
 
     // Proceso la dirección de orden
     const orderDirection =
@@ -37,15 +37,57 @@ async function listBooks(req, res, next) {
     // Ejecuto la query en base a si existe querystring de search o no
     let queryResults;
     if (search) {
-      queryResults = await connection.query(
-        `
+      if (search && field === "Autor") {
+        queryResults = await connection.query(
+          `
+          SELECT books.id, books.creation_date, books.title, books.author, books.genre, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
+          FROM books, users
+          WHERE (books.author LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
+          ORDER BY ${orderBy} ${orderDirection}
+          `,
+          [`%${search}%`]
+        );
+      } else if (search && field === "Título") {
+        queryResults = await connection.query(
+          `
+          SELECT books.id, books.creation_date, books.title, books.author, books.genre, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
+          FROM books, users
+          WHERE (books.title LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
+          ORDER BY ${orderBy} ${orderDirection}
+          `,
+          [`%${search}%`]
+        );
+      } else if (search && field === "Localidad") {
+        queryResults = await connection.query(
+          `
+        SELECT books.id, books.creation_date, books.title, books.author, books.genre, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
+        FROM books, users
+        WHERE (users.location LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
+        ORDER BY ${orderBy} ${orderDirection}
+        `,
+          [`%${search}%`]
+        );
+      } else if (search && field === "Género") {
+        queryResults = await connection.query(
+          `
+        SELECT books.id, books.creation_date, books.title, books.author, books.genre, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
+        FROM books, users
+        WHERE (books.genre LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
+        ORDER BY ${orderBy} ${orderDirection}
+        `,
+          [`%${search}%`]
+        );
+      } else {
+        queryResults = await connection.query(
+          `
         SELECT books.id, books.creation_date, books.title, books.author, books.genre, books.synopsis, books.description, books.author_biography, books.book_owner_id, books.availability, users.location, users.name, books.image
         FROM books, users
         WHERE (books.author LIKE ? OR books.title LIKE ? OR users.location LIKE ? OR books.genre LIKE ?) AND (books.book_owner_id=users.id) AND books.availability=TRUE
         ORDER BY ${orderBy} ${orderDirection}
         `,
-        [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`]
-      );
+          [`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`]
+        );
+      }
     } else {
       queryResults = await connection.query(
         `

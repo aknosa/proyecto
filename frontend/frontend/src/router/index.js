@@ -93,6 +93,14 @@ const routes = [
     },
   },
   {
+    path: "/validate/:code",
+    name: "ValidateUser",
+    component: () => import("../views/ValidateUser.vue"),
+    meta: {
+      allowAnon: true,
+    },
+  },
+  {
     path: "*",
     name: "Error",
     component: () => import("../views/Error.vue"),

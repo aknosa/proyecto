@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Libros:</h2>
+    <h2 v-if="showedBook.length!==0">Libros:</h2>
     <div id="books">
       <ul>
         <li v-for="(book, index) in showedBook" :key="book.id">
@@ -121,6 +121,9 @@ export default {
         this.seeProfile = false;
       }
     }
+  },
+  beforeUpdate() {
+    this.getAllProfile();
   },
   created() {
     this.getAllProfile();

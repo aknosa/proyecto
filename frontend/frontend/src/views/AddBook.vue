@@ -45,7 +45,7 @@
 
 <script>
 import axios from "axios";
-import { config } from "../api/utils";
+import { config, getAuthToken } from "../api/utils";
 import Swal from "sweetalert2";
 
 export default {
@@ -88,9 +88,16 @@ export default {
         formData.append("image", self.image);
 
         axios
-          .post("http://localhost:3000/books", formData, config, {
-            header: { "Content-type": "multipart/form-data" }
-          })
+          .post(
+            "http://localhost:3000/books",
+            formData,
+            {
+              headers: { Authorization: getAuthToken() }
+            },
+            {
+              header: { "Content-type": "multipart/form-data" }
+            }
+          )
           .then(function(response) {
             console.log(response);
             Swal.fire(

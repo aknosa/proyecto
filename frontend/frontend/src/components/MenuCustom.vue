@@ -10,7 +10,7 @@
       <router-link v-show="!isLogin" :to="{name: 'Login'}">Login</router-link>
       <router-link v-show="!isLogin" :to="{name: 'Register'}">Registro</router-link>
       <router-link v-show="isLogin" :to="{name: 'AddBook'}">Publicar</router-link>
-      <router-link v-if="isLogin" :to="{name: 'Profile', params: {id:tokenData(this.token)}}">Perfil</router-link>
+      <router-link v-if="isLogin" :to="{name: 'Profile', params: {id:id}}">Perfil</router-link>
       <button v-show="isLogin" @click="logoutUser()">
         <figure>
           <img src="../assets/entrar.png" />
@@ -27,7 +27,8 @@ import { isLoggedIn } from "../api/utils";
 export default {
   name: "MenuCustom",
   props: {
-    isLogin: Boolean
+    isLogin: Boolean,
+    id: Number
   },
   data() {
     return {

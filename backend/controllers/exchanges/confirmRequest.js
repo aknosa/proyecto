@@ -136,7 +136,8 @@ async function confirmRequest(req, res, next) {
     try {
       await sendMail({
         email,
-        title: "Han aceptado tu petición de intercambio",
+        title:
+          "Intercambio de Libros | Han aceptado tu petición de intercambio",
         content: `${wantedBookUserInfo[0].name} ha aceptado intercambiar tu libro '${offeredBookInfo[0].title}' por su libro '${wantedBookInfo[0].title}' que habías solicitado. Para veros en: ${place}, en la fecha: ${formattedDate}. Para valorar al otro usuario en cómo ha ido el intercambio, puedes visitar esta página: http://localhost:8080/#/exchange/${id}/rate-user/${req.auth.id}`,
       });
     } catch (error) {
@@ -147,7 +148,8 @@ async function confirmRequest(req, res, next) {
     try {
       await sendMail({
         email: wantedBookUserInfo[0].email,
-        title: "Has aceptado la petición de intercambio",
+        title:
+          "Intercambio de Libros | Has aceptado la petición de intercambio",
         content: `El intercambio va tener lugar en: ${place}, en la fecha: ${formattedDate}. Para valorar al otro usuario en cómo ha ido el intercambio, puedes visitar esta página: http://localhost:8080/#/exchange/${id}/rate-user/${currentExchange[0].offered_book_user_id}`,
       });
     } catch (error) {

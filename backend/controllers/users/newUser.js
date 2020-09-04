@@ -35,13 +35,13 @@ async function newUser(req, res, next) {
     // http://localhost:3000/users/validate/454e5109e4f3245c63be6fddb9ab05e4296ad1c6
 
     const registrationCode = randomString(40);
-    const validationURL = `${process.env.PUBLIC_HOST}/users/validate/${registrationCode}`;
+    const validationURL = `${process.env.FRONTEND_URL}/validate/${registrationCode}`;
 
     //Enviamos la url anterior por mail
     try {
       await sendMail({
         email,
-        title: "Valida tu cuenta de usuario en la app de Intercambio de Libros",
+        title: "Intercambio de Libros | Valida tu cuenta de usuario",
         content: `Para validar tu cuenta de usuario en la app de Intercambio de Libros haz click aquí: ${validationURL}`,
       });
     } catch (error) {

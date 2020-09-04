@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { config } from "../api/utils";
+import { config, getAuthToken } from "../api/utils";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -35,10 +35,9 @@ export default {
       var self = this;
 
       axios
-        .get(
-          "http://localhost:3000/users/" + this.$route.params.user_id,
-          config
-        )
+        .get("http://localhost:3000/users/" + this.$route.params.user_id, {
+          headers: { Authorization: getAuthToken() }
+        })
         .then(function(response) {
           self.user = response.data.data;
         })
@@ -53,7 +52,9 @@ export default {
             this.$route.params.exchange_id +
             "/votes",
           { userRating: this.rating },
-          config
+          {
+            headers: { Authorization: getAuthToken() }
+          }
         )
         .then(response => {
           Swal.fire(

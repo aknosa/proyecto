@@ -79,6 +79,7 @@ const editUserSchema = Joi.object().keys({
   ),
   phoneNumber: Joi.number()
     .allow("")
+    .allow("null")
     .integer()
     .positive()
     .error(generateError("El número de teléfono no es válido.", 400)),

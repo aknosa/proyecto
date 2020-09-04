@@ -48,7 +48,7 @@ async function recoverUserPassword(req, res, next) {
     try {
       await sendMail({
         email: email,
-        title: "Código de reseteo de tu password",
+        title: "Intercambio de Libros | Código de reseteo de tu password",
         content: `
           Alguién solicitó una recuperación de tu contraseña, este es el código que tienes que usar:
           ${recoverCode}.

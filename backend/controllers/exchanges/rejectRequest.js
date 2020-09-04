@@ -79,7 +79,8 @@ async function rejectRequest(req, res, next) {
     try {
       await sendMail({
         email,
-        title: "Han rechazado tu petición de intercambio",
+        title:
+          "Intercambio de Libros | Han rechazado tu petición de intercambio",
         content: `El usuario con id ${req.auth.id} no ha querido intercambiar tu libro por el libro con id ${currentExchange[0].wanted_book_id} que habías solicitado.`,
       });
     } catch (error) {

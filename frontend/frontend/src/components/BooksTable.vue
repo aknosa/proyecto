@@ -2,6 +2,12 @@
   <div id="table">
     <div id="searcher">
       <input type="search" v-model="searchName" placeholder="Título, autor, género o localidad" />
+      <select v-model="field">
+        <option>Autor</option>
+        <option>Título</option>
+        <option>Localidad</option>
+        <option>Género</option>
+      </select>
       <button @click="searchByName()">Buscar</button>
     </div>
     <h3
@@ -71,6 +77,7 @@ export default {
   },
   data() {
     return {
+      field: "Autor",
       searchName: "",
       showResults: false,
       isLoading: false,
@@ -117,7 +124,7 @@ export default {
       this.currentIndex = page * this.elementsPerPage;
     },
     searchByName() {
-      let search = this.searchName;
+      let search = { theSearch: this.searchName, theField: this.field };
       this.$emit("booksList", search);
       this.isLoading = true;
       setTimeout(() => {
@@ -213,10 +220,13 @@ h3 {
   animation-name: animation;
   animation-duration: 1s;
 }
-
+#searcher {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 input {
-  width: 78%;
-  margin-left: 0.25rem;
+  width: 55%;
   border-radius: 25px;
   border: 2px solid #96bb7c;
   color: #222222;
@@ -226,14 +236,32 @@ input {
   background-repeat: no-repeat;
   background-size: 13px;
   padding-left: 40px;
+  height: 30px;
 }
 
 input:focus {
   border: 2px solid #905858;
 }
 
-button {
-  margin-left: 0.25rem;
+select {
+  width: 80px;
+  padding: 0.25rem;
+  margin-left: 0.15rem;
+  border-radius: 25px;
+  background-color: white;
+  border: 2px solid #96bb7c;
+  height: 30px;
+}
+
+select:focus {
+  border: 2px solid #905858;
+  outline: none;
+  transition: all 0.5s;
+}
+
+#searcher button {
+  margin-left: 0.15rem;
+  height: 30px;
   padding: 0.25rem;
   margin-bottom: 4rem;
   background-color: #905858;
@@ -243,7 +271,7 @@ button {
   transition: all 0.5s;
 }
 
-button:hover {
+#searcher button:hover {
   background-color: #96bb7c;
   color: #5d3a3a;
   border: 2px solid #905858;
@@ -297,20 +325,24 @@ li {
 }
 
 @media (min-width: 600px) {
-  #searcher {
-    text-align: center;
-  }
   input {
     width: 50%;
     height: 2rem;
     background-size: 20px;
   }
-  button {
-    font-size: 1.1rem;
-    padding: 0.5rem;
-    border: 2px solid #96bb7c;
+  select {
+    height: 2rem;
+    width: 100px;
   }
-  button:hover {
+  #searcher button {
+    font-size: 1rem;
+    height: 2rem;
+    padding: 0 0.9rem 0 0.9rem;
+    border: 2px solid #96bb7c;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  #searcher button:hover {
     border: 2px solid;
   }
   h3 {

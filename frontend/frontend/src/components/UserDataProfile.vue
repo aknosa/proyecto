@@ -18,23 +18,23 @@
       <ul>
         <li>
           <b>Nombre:</b>
-          {{ user.name }}
+          {{user.name}}
         </li>
         <li v-if="seeProfile">
           <b>Email:</b>
-          {{ user.email }}
+          {{user.email}}
         </li>
         <li>
           <b>Localidad:</b>
-          {{ user.location }}
+          {{user.location}}
         </li>
         <li v-if="seeProfile">
           <b>Fecha de Nacimiento:</b>
-          {{ format(new Date(user.birthdate), "dd/MM/yyyy") }}
+          {{format(new Date(user.birthdate), "dd/MM/yyyy")}}
         </li>
         <li v-if="seeProfile">
           <b>Teléfono de contacto:</b>
-          {{ user.phoneNumber }}
+          {{user.phoneNumber | phoneNumberFilter}}
         </li>
       </ul>
       <div id="buttons" v-if="seeProfile">
@@ -61,6 +61,13 @@ export default {
   props: {
     user: Object
   },
+  filters: {
+    phoneNumberFilter(value) {
+      if (value === "null") {
+        return "";
+      }
+    }
+  },
   methods: {
     sendPasswordChangeRequest() {
       this.$emit("change");
@@ -80,6 +87,9 @@ export default {
         this.seeProfile = false;
       }
     }
+  },
+  beforeUpdate() {
+    this.getAllProfile();
   },
   created() {
     this.getAllProfile();

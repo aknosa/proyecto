@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <menucustom v-on:logout="doingLogout" :is-login="isLogin" />
+    <menucustom v-on:logout="doingLogout" :is-login="isLogin" :id="id" />
     <router-view v-on:login="doingLogin" />
     <footercustom />
   </div>
@@ -19,12 +19,16 @@ export default {
   },
   data() {
     return {
-      isLogin: false
+      isLogin: false,
+      id: tokenData(getAuthToken())
     };
   },
   methods: {
     doingLogin() {
       this.isLogin = true;
+      let token = getAuthToken();
+      let userId = tokenData(token);
+      this.id = userId;
     },
     doingLogout() {
       this.isLogin = false;

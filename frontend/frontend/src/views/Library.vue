@@ -29,7 +29,8 @@ export default {
       axios
         .get("http://localhost:3000/books", {
           params: {
-            search: search
+            search: search.theSearch,
+            field: search.theField
           }
         })
         .then(function(response) {

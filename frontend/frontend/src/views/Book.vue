@@ -77,38 +77,40 @@ export default {
         confirmButtonText: "Sí"
       }).then(result => {
         if (result.value) {
-          Swal.fire(
-            "¡Enviada!",
-            "Tu solicitud de intercambio ha sido enviada.",
-            "success"
-          );
           this.sendExchangeRequest();
         }
       });
     },
     sendExchangeRequest() {
-      var self = this;
-
       axios
-        .post("http://localhost:3000/books/" + this.id + "/request", "", config)
-        .then(function(response) {
-          console.log(response);
+        .post("http://localhost:3000/books/" + this.id + "/request", "", {
+          headers: { Authorization: getAuthToken() }
         })
-        .catch(function(error) {
-          console.log(error);
+        .then(response => {
+          Swal.fire(
+            "¡Enviada!",
+            "Tu solicitud de intercambio ha sido enviada.",
+            "success"
+          );
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: "error",
+            text: error.response.data.message,
+            showConfirmButton: false,
+            timer: 4000
+          });
         });
     },
     getBookById() {
-      var self = this;
-
       axios
         .get("http://localhost:3000/books/" + this.id)
-        .then(function(response) {
-          self.book = response.data.data;
-          self.bookOwnerId = response.data.data.book_owner_id;
-          self.isOtherUser();
+        .then(response => {
+          this.book = response.data.data;
+          this.bookOwnerId = response.data.data.book_owner_id;
+          this.isOtherUser();
         })
-        .catch(function(error) {
+        .catch(error => {
           console.log(error);
         });
     },
