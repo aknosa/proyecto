@@ -8,7 +8,7 @@
       <form>
         <label for="email">Email:</label>
         <input v-model="email" name="email" type="email" />
-        <label for="password">Password:</label>
+        <label for="password">Contraseña:</label>
         <input v-model="password" name="password" type="password" />
       </form>
       <div id="button">

@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       isLogin: false,
-      id: tokenData(getAuthToken())
+      id: ""
     };
   },
   methods: {
@@ -35,6 +35,7 @@ export default {
     },
     getLogin() {
       this.isLogin = isLoggedIn();
+      this.id = tokenData(getAuthToken());
     }
   },
   created() {

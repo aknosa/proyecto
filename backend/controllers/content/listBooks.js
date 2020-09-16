@@ -9,11 +9,11 @@ async function listBooks(req, res, next) {
     //  search: para listar solo las entradas que contengan su valor en place o description
     //  order: para ordernar el listado por voteAverage, place o date
     //  direction: para la dirección de la ordenación desc o asc
-    const { search, order, direction, field } = req.query;
+    const { search, order, /*direction,*/ field } = req.query;
 
     // Proceso la dirección de orden
-    const orderDirection =
-      (direction && direction.toLowerCase()) === "desc" ? "DESC" : "ASC";
+    const orderDirection = "DESC";
+    //(direction && direction.toLowerCase()) === "desc" ? "DESC" : "ASC";
 
     // Proceso el campo de orden
     let orderBy;

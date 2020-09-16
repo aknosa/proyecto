@@ -131,7 +131,7 @@ async function confirmRequest(req, res, next) {
     );
 
     let email = offeredBookUserEmail[0].email;
-    let formattedDate = format(new Date(date), "dd-MM-yyyy HH:mm");
+    let formattedDate = format(new Date(date), "dd-MM-yyyy 'a las' HH:mm");
 
     try {
       await sendMail({

@@ -76,16 +76,15 @@ export default {
     },
     addNewBook() {
       if (this.createBook === true) {
-        var self = this;
         let formData = new FormData();
 
-        formData.append("title", self.title);
-        formData.append("author", self.author);
-        formData.append("genre", self.genre);
-        formData.append("synopsis", self.synopsis);
-        formData.append("authorBiography", self.biography);
-        formData.append("description", self.description);
-        formData.append("image", self.image);
+        formData.append("title", this.title);
+        formData.append("author", this.author);
+        formData.append("genre", this.genre);
+        formData.append("synopsis", this.synopsis);
+        formData.append("authorBiography", this.biography);
+        formData.append("description", this.description);
+        formData.append("image", this.image);
 
         axios
           .post(
@@ -98,7 +97,7 @@ export default {
               header: { "Content-type": "multipart/form-data" }
             }
           )
-          .then(function(response) {
+          .then(response => {
             console.log(response);
             Swal.fire(
               "¡Publicado!",
@@ -106,8 +105,13 @@ export default {
               "success"
             );
           })
-          .catch(function(error) {
-            console.log(error);
+          .catch(error => {
+            Swal.fire({
+              icon: "error",
+              text: error.response.data.message,
+              showConfirmButton: false,
+              timer: 4000
+            });
           });
         this.createBook = false;
         this.title = "";
@@ -152,6 +156,9 @@ p {
   margin-top: 4rem;
   margin-bottom: 0;
   color: #f0134d;
+  position: relative;
+  animation-name: animation;
+  animation-duration: 1s;
 }
 
 #form {

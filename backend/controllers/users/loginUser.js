@@ -26,12 +26,12 @@ async function loginUser(req, res, next) {
 
     if (dbUser.length === 0) {
       throw generateError(
-        "No hay ningún usuario registrado con ese email o la password es incorrecta.",
+        "No hay ningún usuario registrado con ese email o la contraseña es incorrecta.",
         401
       );
     } else if (!dbUser[0].active) {
       throw generateError(
-        "El usuario está registrado pero no activado. Por favor revisa tu email y activalo.",
+        "El usuario está registrado pero no activado. Por favor, revisa tu email y actívalo.",
         401
       );
     }

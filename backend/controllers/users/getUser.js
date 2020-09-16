@@ -27,7 +27,8 @@ async function getUser(req, res, next) {
       `
       SELECT title,author,image,id,genre,synopsis,author_biography,description 
       FROM book_exchange.books
-      WHERE book_owner_id=? && availability=TRUE;
+      WHERE book_owner_id=? && availability=TRUE
+      ORDER BY creation_date DESC;
       `,
       [id]
     );
@@ -77,19 +78,19 @@ async function getUser(req, res, next) {
     const [userData] = result;
 
     const responseData = {
-      registrationDate: userData.registrationDate,
+      registrationDate: userData.registration_date,
       name: userData.name,
       image: userData.image,
       userRating: Math.ceil(userRating),
       location: userData.location,
       books: booksResult,
+      phoneNumber: userData.phone_number,
     };
 
     if (userData.id === req.auth.id || req.auth.role === "admin") {
       responseData.email = userData.email;
       responseData.role = userData.role;
       responseData.birthdate = userData.birthdate;
-      responseData.phoneNumber = userData.phone_number;
     }
 
     res.send({

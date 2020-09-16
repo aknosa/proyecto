@@ -95,7 +95,7 @@ async function requestBook(req, res, next) {
       await sendMail({
         email,
         title: `Intercambio de Libros | Tu libro '${currentBook[0].title}' fue sugerido para intercambiar`,
-        content: `${offeredBookUserInfo[0].name} te ha solicitado intercambiar tu libro por un libro de su biblioteca. Ve para decidir sobre el intercambio a: http://localhost:8080/#/exchange/${exchangeInfo[0].id}/user/${req.auth.id}`,
+        content: `${offeredBookUserInfo[0].name} te ha solicitado intercambiar tu libro por un libro de su biblioteca. Ve, para decidir sobre el intercambio, a: http://localhost:8080/#/exchange/${exchangeInfo[0].id}/user/${req.auth.id}`,
       });
     } catch (error) {
       throw generateError("Error en el envío de mail.", 500);

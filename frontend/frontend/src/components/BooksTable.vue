@@ -1,7 +1,11 @@
 <template>
   <div id="table">
     <div id="searcher">
-      <input type="search" v-model="searchName" placeholder="Título, autor, género o localidad" />
+      <input
+        type="search"
+        v-model="searchName"
+        placeholder="Busca por título, autor, género o localidad"
+      />
       <select v-model="field">
         <option>Autor</option>
         <option>Título</option>

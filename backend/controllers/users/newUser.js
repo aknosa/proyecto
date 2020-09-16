@@ -42,7 +42,7 @@ async function newUser(req, res, next) {
       await sendMail({
         email,
         title: "Intercambio de Libros | Valida tu cuenta de usuario",
-        content: `Para validar tu cuenta de usuario en la app de Intercambio de Libros haz click aquí: ${validationURL}`,
+        content: `Para validar tu cuenta de usuario en Intercambio de Libros, haz click aquí: ${validationURL}`,
       });
     } catch (error) {
       throw generateError("Error en el envío de mail.", 500);

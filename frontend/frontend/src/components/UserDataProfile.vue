@@ -30,11 +30,15 @@
         </li>
         <li v-if="seeProfile">
           <b>Fecha de Nacimiento:</b>
-          {{format(new Date(user.birthdate), "dd/MM/yyyy")}}
+          {{user.birthdate | dateFilter}}
         </li>
-        <li v-if="seeProfile">
-          <b>Teléfono de contacto:</b>
+        <li>
+          <b>Teléfono de Contacto:</b>
           {{user.phoneNumber | phoneNumberFilter}}
+        </li>
+        <li>
+          <b>Fecha de Creación:</b>
+          {{user.registrationDate | dateFilter}}
         </li>
       </ul>
       <div id="buttons" v-if="seeProfile">
@@ -53,7 +57,6 @@ export default {
   name: "UserDataProfile",
   data() {
     return {
-      format,
       seeProfile: false,
       token: getAuthToken()
     };
@@ -63,9 +66,14 @@ export default {
   },
   filters: {
     phoneNumberFilter(value) {
-      if (value === "null") {
+      if (value === null || value === "null") {
         return "";
+      } else {
+        return value;
       }
+    },
+    dateFilter(value) {
+      return format(new Date(value), "dd/MM/yyyy");
     }
   },
   methods: {
@@ -185,6 +193,9 @@ li {
     max-width: 1000px;
     height: 300px;
     margin: 5rem auto 0 auto;
+  }
+  #stars {
+    margin-top: 0.5rem;
   }
   img {
     width: 225px;

@@ -26,7 +26,7 @@
             <b>Publicar</b>. Allí verás los campos obligatorios y opcionales que tendrás que rellenar.
           </li>
           <li>
-            Cuando ya hayas publicado los libros que ofreces para intercambiar (Cuanto más mejor, así el usuario que recibe la petición de intercambio tiene más libros para escoger). Busca un libro en
+            Cuando ya hayas publicado los libros que ofreces para intercambiar (Cuanto más mejor, así el usuario que recibe la petición de intercambio tiene más libros para escoger), busca un libro en
             <b>Biblioteca</b>, pulsa en él para ver más información y después pulsa el botón de
             <b>Solicitar Intercambio</b>.
           </li>

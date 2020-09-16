@@ -47,9 +47,6 @@ export default {
           console.log(error);
         });
     }
-  },
-  created() {
-    this.getBooks();
   }
 };
 </script>
